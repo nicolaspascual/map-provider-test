@@ -1,5 +1,5 @@
+import { OverlayView } from '@react-google-maps/api'
 import React from 'react'
-import { Marker } from 'react-map-gl'
 import useSuperCluster from 'use-supercluster'
 import { NumberMarkerIcon } from '../../icons'
 import { Coordinates } from '../../types/coordinates'
@@ -32,17 +32,19 @@ export default function AvatarClusterer(props: { coordinates: Coordinates[], bou
 
       if (isCluster) {
         return (
-          <Marker
+          <OverlayView
             key={idx}
-            latitude={latitude}
-            longitude={longitude}
-            offsetLeft={-25}
-            offsetTop={-25}
+            position={{ lat: latitude, lng: longitude }}
+            mapPaneName='overlayMouseTarget'
+            getPixelPositionOffset={(width, height) => ({
+              x: -(width / 2),
+              y: -(height / 2),
+            })}
           >
             <NumberMarkerIcon
               users={Array(pointCount).fill({ firstName: "Nicolas", lastName: "Pascual" })}
             />
-          </Marker>
+          </OverlayView>
         )
       }
 

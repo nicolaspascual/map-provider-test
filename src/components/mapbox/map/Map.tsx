@@ -4,7 +4,7 @@ import AvatarClusterer from '../avatar_marker/AvatarClusterer'
 import Itinerary from '../components/Itinerary'
 
 
-export default function Map({ pin_positions, flight_positions, token }: { pin_positions: any[], flight_positions: any[], token: string}) {
+export default function Map({ pin_positions, flight_positions, token }: { pin_positions: any[], flight_positions: any[], token: string }) {
   const mapRef = useRef<MapRef>(null)
 
   const [viewport, setViewport] = useState({
@@ -27,12 +27,13 @@ export default function Map({ pin_positions, flight_positions, token }: { pin_po
     const [origin_lat, origin_lng] = e.origin_coords
     const [destination_lat, destination_lng] = e.destination_coords
     return (
-      <Itinerary 
+      <Itinerary
         key={idx}
-        map={mapRef.current}
+        user={{ firstName: "Nicolás", lastName: "Pascual" }}
+        avatarURL={Math.random() > 0.5 ? "https://i1.wp.com/nypost.com/wp-content/uploads/sites/2/2020/01/cow-feature.jpg?quality=80&strip=all&ssl=1" : undefined}
         origin={{ latitude: origin_lat, longitude: origin_lng }}
         destination={{ latitude: destination_lat, longitude: destination_lng }}
-        img="https://i1.wp.com/nypost.com/wp-content/uploads/sites/2/2020/01/cow-feature.jpg?quality=80&strip=all&ssl=1"
+        map={mapRef.current}
       />
     )
   }), [flight_positions])
@@ -41,7 +42,7 @@ export default function Map({ pin_positions, flight_positions, token }: { pin_po
     <MapGL
       {...viewport}
       ref={mapRef}
-      width="50vw"
+      width="100vw"
       height="100vh"
       mapStyle="mapbox://styles/mapbox/light-v10"
       onViewportChange={setViewport}
@@ -50,7 +51,6 @@ export default function Map({ pin_positions, flight_positions, token }: { pin_po
       <AvatarClusterer
         bounds={bounds}
         coordinates={pin_positions.map(e => ({ latitude: e.origin_coords[0], longitude: e.origin_coords[1] }))}
-        changeViewPort={(opts) => setViewport({ ...viewport, ...opts })}
         zoom={viewport.zoom}
       />
       {flights}

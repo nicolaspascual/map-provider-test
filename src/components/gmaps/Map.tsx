@@ -1,14 +1,14 @@
 import React from 'react'
-import { GoogleMap, useJsApiLoader, MarkerClusterer } from '@react-google-maps/api'
-import AvatarMarker from './components/AvatarMarker'
+import { GoogleMap, useJsApiLoader } from '@react-google-maps/api'
 import ItineraryPolyline from './components/ItineraryPolyline'
+import AvatarClusterer from './components/AvatarClusterer'
 
 
 export default function Map({ markers, flights, token }: { markers: any[], flights: any[], token: string }) {
 
-  const center = {
-    lat: (markers[0] as any).origin_coords[0],
-    lng: (markers[0] as any).origin_coords[1],
+  const initialCenter = {
+    lat: (flights[0] as any).origin_coords[0],
+    lng: (flights[0] as any).origin_coords[1],
   }
 
   const { isLoaded } = useJsApiLoader({
@@ -17,7 +17,16 @@ export default function Map({ markers, flights, token }: { markers: any[], fligh
   })
 
   const [map, setMap] = React.useState<google.maps.Map | null>(null)
-  const [zoom, setZoom] = React.useState<number | undefined>(8)
+  const [zoom, setZoom] = React.useState<number | undefined>(4)
+  const [center, setCenter] = React.useState<{ lat: number, lng: number }>(initialCenter)
+  const [bounds, _setBounds] = React.useState<[number, number, number, number] | null>()
+
+
+  const setBounds = () => {
+    const currentBounds = map?.getBounds()
+    if (currentBounds)
+    _setBounds([currentBounds.getSouthWest().lng(), currentBounds.getSouthWest().lat(), currentBounds.getNorthEast().lng(), currentBounds.getNorthEast().lat()])
+  }
 
 
   const onLoad = React.useCallback(function callback(map) {
@@ -37,7 +46,7 @@ export default function Map({ markers, flights, token }: { markers: any[], fligh
         styles: require('./styles.json')
       }}
       mapContainerStyle={{
-        width: "50vw",
+        width: "100vw",
         height: "100vh"
       }}
       center={center}
@@ -45,25 +54,16 @@ export default function Map({ markers, flights, token }: { markers: any[], fligh
       onLoad={onLoad}
       onUnmount={onUnmount}
       onZoomChanged={() => setZoom(map?.getZoom())}
+      onBoundsChanged={setBounds}
     >
-      <MarkerClusterer
-        averageCenter
-        enableRetinaIcons
-        gridSize={60}
-      >
-        {(clusterer) => markers.slice(1, 2).map((k, idx) => {
-          const [lat, lng] = k['origin_coords']
-          return (
-            <AvatarMarker
-              key={idx}
-              img="https://i1.wp.com/nypost.com/wp-content/uploads/sites/2/2020/01/cow-feature.jpg?quality=80&strip=all&ssl=1"
-              position={{ lat, lng }}
-              clusterer={clusterer}
-            />
-          )
-        })
-        }
-      </MarkerClusterer>
+
+      {bounds && zoom && (
+        <AvatarClusterer
+          bounds={bounds}
+          coordinates={markers.map(e => ({ latitude: e.origin_coords[0], longitude: e.origin_coords[1] }))}
+          zoom={zoom}
+        />
+      )}
 
       { map && zoom &&
         flights.map((k, idx) => {
@@ -72,7 +72,8 @@ export default function Map({ markers, flights, token }: { markers: any[], fligh
           return (
             <ItineraryPolyline
               key={idx}
-              img="https://i1.wp.com/nypost.com/wp-content/uploads/sites/2/2020/01/cow-feature.jpg?quality=80&strip=all&ssl=1"
+              user={{ firstName: "Nicolás", lastName: "Pascual" }}
+              avatarURL={Math.random() > 0.5 ? "https://i1.wp.com/nypost.com/wp-content/uploads/sites/2/2020/01/cow-feature.jpg?quality=80&strip=all&ssl=1" : undefined}
               origin={{ latitude: origin_lat, longitude: origin_lng }}
               destination={{ latitude: destination_lat, longitude: destination_lng }}
             />
