@@ -3,6 +3,12 @@ import MapGL, { MapRef } from 'react-map-gl'
 import AvatarClusterer from '../avatar_marker/AvatarClusterer'
 import Itinerary from '../components/Itinerary'
 
+import mapboxgl from 'mapbox-gl'
+
+// @ts-expect-error
+// eslint-disable-next-line import/no-webpack-loader-syntax
+mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default
+
 
 export default function Map({ pin_positions, flight_positions, token }: { pin_positions: any[], flight_positions: any[], token: string }) {
   const mapRef = useRef<MapRef>(null)

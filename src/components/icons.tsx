@@ -1,6 +1,4 @@
-import { Avatar, color, gradient, GradientName, typeScale } from '@travelperksl/design-system'
-import { getInitials, getRandomGradientName, getFontSize, getPixelSize } from '@travelperksl/design-system/components/Avatar'
-import React, { ComponentProps } from 'react'
+import React from 'react'
 import Styled from 'styled-components/macro'
 
 const HoverableG = Styled.g<{ hoverColor: string, color: string }>`
@@ -12,22 +10,25 @@ const HoverableG = Styled.g<{ hoverColor: string, color: string }>`
 `
 
 function Icon(
-  { size = "medium",
-    ...props
-  }: {
-    size?: ComponentProps<typeof Avatar>['size'],
+  props: {
     onClick?: () => void,
     text?: string,
     tooltip: string,
     imgURL?: string,
-    gradient?: GradientName,
     showTriangle: boolean
   }) {
 
-  const fontSettings = typeScale[getFontSize(size)]
-  const fontSize = fontSettings.fontSize
-  const fontWeight = fontSettings.fontWeight
-  const pixelSize = `calc(${getPixelSize(size)} + 20px)`
+  const fontSize = "12px"
+  const fontWeight = "500"
+  const pixelSize = "52px"
+
+  const gradient = {
+    from: '#FAE898',
+    to: '#F0D976',
+    angle: 135,
+  }
+
+  const isNumber = props.text && !isNaN(+props.text)
 
   return (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 50 50"
@@ -35,14 +36,14 @@ function Icon(
       onClick={() => props.onClick && props.onClick()}
     >
       <title>{props.tooltip}</title>
-      <HoverableG filter="url(#filter0_ddd)" color={color.madrugada} hoverColor={color.steel}>
+      <HoverableG filter="url(#filter0_ddd)" color={"#1D2C3C"} hoverColor={"#79879D"}>
         <g clipPath="url(#clip0)">
           <circle cx="25" cy="20" r="16" />
           {props.imgURL
             ? <circle cx="25" cy="20" r="13" fill="url(#avatarImage)" pointerEvents="none" />
             : (
               <>
-                <circle cx="25" cy="20" r="13" fill={props.gradient ? "url(#gradient)" : "inherit"} pointerEvents="none" />
+                <circle cx="25" cy="20" r="13" fill={!isNumber ? "url(#gradient)" : "inherit"} pointerEvents="none" />
                 <text width="100%" height="100%" x="25" y="25"
                   fontWeight={fontWeight} fontSize={fontSize}
                   fill="white" textAnchor="middle"
@@ -57,10 +58,10 @@ function Icon(
         {props.showTriangle && <path d="M20,35 30,35 25,40z" />}
       </HoverableG>
       <defs>
-        {props.gradient && (
-          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%" gradientTransform={`rotate(${gradient[props.gradient].angle})`}>
-            <stop offset="0%" style={{ stopColor: gradient[props.gradient].from }} />
-            <stop offset="100%" style={{ stopColor: gradient[props.gradient].to }} />
+        {!isNumber && (
+          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%" gradientTransform={`rotate(${gradient.angle})`}>
+            <stop offset="0%" style={{ stopColor: gradient.from }} />
+            <stop offset="100%" style={{ stopColor: gradient.to }} />
           </linearGradient>
         )}
         <clipPath id="clip0">
@@ -96,7 +97,7 @@ function Icon(
 }
 
 type Props = {
-  size?: ComponentProps<typeof Avatar>['size'],
+  size?: string,
   onClick?: () => void,
 }
 
@@ -116,13 +117,11 @@ type NumberProps = {
 } & Props
 
 const AvatarIcon = (props: AvatarProps & { showTriangle: boolean }) => {
-  const gradient = getRandomGradientName(props.user.firstName, props.user.lastName)
   return (
     <Icon
       tooltip={`${props.user.firstName} ${props.user.lastName}`}
-      gradient={gradient}
       imgURL={props.avatarURL}
-      text={getInitials(props.user.firstName, props.user.lastName)}
+      text={props.user.firstName[0] + props.user.lastName[0]}
       {...props}
     />
   )
