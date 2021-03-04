@@ -4,18 +4,19 @@ import AvatarClusterer from '../avatar_marker/AvatarClusterer'
 import Itinerary from '../components/Itinerary'
 
 import mapboxgl from 'mapbox-gl'
+import { LocatedTraveler } from '../../../App'
 
 // @ts-expect-error
 // eslint-disable-next-line import/no-webpack-loader-syntax
 mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default
 
 
-export default function Map({ pin_positions, flight_positions, token }: { pin_positions: any[], flight_positions: any[], token: string }) {
+export default function Map({ pin_positions, flight_positions, token }: { pin_positions: LocatedTraveler[], flight_positions: LocatedTraveler[], token: string }) {
   const mapRef = useRef<MapRef>(null)
 
   const [viewport, setViewport] = useState({
-    latitude: (flight_positions[0] as any).origin_coords[0],
-    longitude: (flight_positions[0] as any).origin_coords[1],
+    latitude: pin_positions[0].locations[0].latitude,
+    longitude: pin_positions[0].locations[0].latitude,
     zoom: 4,
     bearing: 0,
     pitch: 0
@@ -30,8 +31,8 @@ export default function Map({ pin_positions, flight_positions, token }: { pin_po
     : null
 
   const flights = useMemo(() => flight_positions.map((e, idx) => {
-    const [origin_lat, origin_lng] = e.origin_coords
-    const [destination_lat, destination_lng] = e.destination_coords
+    const { latitude: origin_lat, longitude: origin_lng } = e.locations[0]
+    const { latitude: destination_lat, longitude: destination_lng } = e.locations[1]
     return (
       <Itinerary
         key={idx}
@@ -56,7 +57,7 @@ export default function Map({ pin_positions, flight_positions, token }: { pin_po
     >
       <AvatarClusterer
         bounds={bounds}
-        coordinates={pin_positions.map(e => ({ latitude: e.origin_coords[0], longitude: e.origin_coords[1] }))}
+        coordinates={pin_positions.map(e => (e.locations[0]))}
         zoom={viewport.zoom}
       />
       {flights}

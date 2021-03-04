@@ -2,13 +2,14 @@ import React from 'react'
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api'
 import ItineraryPolyline from './components/ItineraryPolyline'
 import AvatarClusterer from './components/AvatarClusterer'
+import { LocatedTraveler } from '../../App'
 
 
-export default function Map({ markers, flights, token }: { markers: any[], flights: any[], token: string }) {
+export default function Map({ markers, flights, token }: { markers: LocatedTraveler[], flights: LocatedTraveler[], token: string }) {
 
   const initialCenter = {
-    lat: (flights[0] as any).origin_coords[0],
-    lng: (flights[0] as any).origin_coords[1],
+    lat: markers[0].locations[0].latitude,
+    lng: markers[0].locations[0].latitude,
   }
 
   const { isLoaded } = useJsApiLoader({
@@ -25,7 +26,7 @@ export default function Map({ markers, flights, token }: { markers: any[], fligh
   const setBounds = () => {
     const currentBounds = map?.getBounds()
     if (currentBounds)
-    _setBounds([currentBounds.getSouthWest().lng(), currentBounds.getSouthWest().lat(), currentBounds.getNorthEast().lng(), currentBounds.getNorthEast().lat()])
+      _setBounds([currentBounds.getSouthWest().lng(), currentBounds.getSouthWest().lat(), currentBounds.getNorthEast().lng(), currentBounds.getNorthEast().lat()])
   }
 
 
@@ -60,20 +61,20 @@ export default function Map({ markers, flights, token }: { markers: any[], fligh
       {bounds && zoom && (
         <AvatarClusterer
           bounds={bounds}
-          coordinates={markers.map(e => ({ latitude: e.origin_coords[0], longitude: e.origin_coords[1] }))}
+          locatedTravelers={markers}
           zoom={zoom}
         />
       )}
 
       { map && zoom &&
         flights.map((k, idx) => {
-          const [origin_lat, origin_lng] = k['origin_coords']
-          const [destination_lat, destination_lng] = k['destination_coords']
+          const { latitude: origin_lat, longitude: origin_lng } = k.locations[0]
+          const { latitude: destination_lat, longitude: destination_lng } = k.locations[1]
           return (
             <ItineraryPolyline
               key={idx}
-              user={{ firstName: "Nicolás", lastName: "Pascual" }}
-              avatarURL={Math.random() > 0.5 ? "https://i1.wp.com/nypost.com/wp-content/uploads/sites/2/2020/01/cow-feature.jpg?quality=80&strip=all&ssl=1" : undefined}
+              user={{ firstName: k.firstName, lastName: k.lastName }}
+              avatarURL={k.avatar}
               origin={{ latitude: origin_lat, longitude: origin_lng }}
               destination={{ latitude: destination_lat, longitude: destination_lng }}
             />

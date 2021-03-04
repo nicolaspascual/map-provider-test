@@ -1,0 +1,61 @@
+[
+    {
+        "trip_id": 2055966,
+        "trip_purpose": "Car",
+        "trip_start_date": "2021-03-03",
+        "trip_end_date": "2021-03-04",
+        "locations": [
+            [
+                41.37439,
+                2.17307
+            ]
+        ],
+        "travelers": [
+            {
+                "id": 342362,
+                "first_name": "Lola",
+                "last_name": "Morales",
+                "profile_picture": "https://www.gravatar.com/avatar/681b711d77d415507976bd28410d9cbb?s=32&d=mp"
+            },
+            {
+                "id": 175936,
+                "first_name": "James",
+                "last_name": "Moos",
+                "profile_picture": "https://www.gravatar.com/avatar/c245cf8c2735cccc8fb30d1ffd51688a?s=32&d=mp"
+            }
+        ]
+    },
+    {
+        "trip_id": 1971517,
+        "trip_purpose": "Xmas",
+        "trip_start_date": "2020-12-11",
+        "trip_end_date": "2021-03-31",
+        "locations": [
+            [
+                52.308601,
+                4.76389
+            ]
+        ],
+        "travelers": []
+    },
+    {
+        "trip_id": 1982616,
+        "trip_purpose": "bsas",
+        "trip_start_date": "2020-12-20",
+        "trip_end_date": "2021-03-20",
+        "locations": [
+            [
+                -34.8222,
+                -58.5358
+            ]
+        ],
+        "travelers": [
+            {
+                "id": 156632,
+                "first_name": "Daniel",
+                "last_name": "Rivero",
+                "profile_picture": "https://www.gravatar.com/avatar/9efbc886c4877f21637797dc2d4748f4?s=32&d=mp"
+            }
+        ]
+    }
+]
